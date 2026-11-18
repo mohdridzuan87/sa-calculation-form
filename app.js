@@ -63,7 +63,7 @@
     if (f.calc) return el("div", { class: "calc" + (f.big ? " big" : "") }, [el("span", { text: f.label }), el("span", { id: "c_" + f.calc, text: "-" })]);
     if (f.money) {
       return el("div", { class: "money" }, [el("div", { class: "lbl", text: f.label }),
-        el("input", { "data-k": f.key, type: "text", inputmode: "decimal", placeholder: "0.00" })]);
+        el("input", { "data-k": f.key, type: "text", inputmode: "decimal", placeholder: "0.00", class: "mny" })]);
     }
     if (f.type === "select") {
       var sel = el("select", { "data-k": f.key });
@@ -98,6 +98,18 @@
     var k = e.target.getAttribute && e.target.getAttribute("data-k");
     if (!k || !current) return;
     var t = e.target;
+    if (t.className === "mny") {
+      var pos = t.selectionStart, before = t.value.slice(0, pos).replace(/[^0-9.]/g, "").length;
+      var raw = t.value.replace(/[^0-9.]/g, ""), dot = raw.indexOf(".");
+      if (dot >= 0) raw = raw.slice(0, dot + 1) + raw.slice(dot + 1).replace(/\./g, "").slice(0, 2);
+      var ip = dot >= 0 ? raw.slice(0, dot) : raw, fp = dot >= 0 ? raw.slice(dot) : "";
+      var out = ip.replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") + fp;
+      if (out !== t.value) {
+        t.value = out;
+        var n = 0, np = 0; while (np < out.length && n < before) { if (/[0-9.]/.test(out[np])) n++; np++; }
+        try { t.setSelectionRange(np, np); } catch (x) { /* ignore */ }
+      }
+    }
     if (t.tagName === "INPUT" && t.type === "text" && t.className === "caps") {
       var up = t.value.toUpperCase();
       if (up !== t.value) { var p = t.selectionStart; t.value = up; try { t.setSelectionRange(p, p); } catch (x) { /* ignore */ } }
