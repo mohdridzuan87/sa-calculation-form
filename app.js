@@ -19,8 +19,7 @@
 
   /* ---------- calculations (same as the Excel form) ---------- */
   function compute(d) {
-    var ent = num(d.ent_body) + num(d.ent_hp) + num(d.ent_ins) + num(d.ent_mi) + num(d.ent_vi);
-    return { totalSelling: num(d.otr) + num(d.ins), entTotal: ent };
+    return { totalSelling: num(d.otr) + num(d.ins) };
   }
 
   /* ---------- storage ---------- */
@@ -36,23 +35,21 @@
   /* ---------- schema ---------- */
   var T = function (key, label, o) { return Object.assign({ key: key, label: label, type: "text" }, o || {}); };
   var M = function (key, label) { return { key: key, label: label, money: true }; };
+  var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   var SECTIONS = [
     { title: "1. Customer & vehicle", open: true, fields: [
-      T("customer", "Customer"), T("sa", "SA"), T("month", "Month"), T("regno", "Reg No"),
+      T("customer", "Customer"), T("sa", "SA"), T("month", "Month", { type: "select", options: [""].concat(MONTHS) }), T("regno", "Reg No"),
       T("regdate", "Reg Date", { type: "date" }), T("model", "Model")] },
     { title: "2. Pricing", open: true, fields: [
       M("otr", "OTR Price w/out Insurance"), M("ins", "Insurance"), { calc: "totalSelling", label: "TOTAL SELLING PRICE", big: true },
       M("loan", "Less Loan Amount"), M("sppn", "Less SPPN/MLM"), M("booking", "Less Booking"),
       M("dp1", "Less Downpayment - 1"), M("dp2", "Less Downpayment - 2"), M("dp3", "Less Downpayment - 3"),
       M("extra", "Less Extra Discounting"), M("broker_claims", "Broker Claims")] },
-    { title: "3. SA Entitlement (pls don't fill in)", fields: [
-      M("ent_body", "Body Comm"), M("ent_hp", "HP"), M("ent_ins", "Insurance"), M("ent_mi", "MI"), M("ent_vi", "VI"),
-      { calc: "entTotal", label: "TOTAL", big: true }] },
-    { title: "4. OM approval & broker details", fields: [
-      T("om", "OM Approval"), { sub: "Broker details" }, T("b_name", "Name"), T("b_ic", "IC"), T("b_bank", "Bank"),
-      T("b_acct", "Account", { mode: "numeric" }), { hint: "Include front/back IC and bank statement." }] },
-    { title: "5. Contributions", fields: [M("sa_contrib", "SA Contribution"), M("comp_contrib", "Comp. Contribution"), M("others", "Others")] }
+    { title: "3. Broker details", fields: [
+      T("b_name", "Name"), T("b_ic", "IC"), T("b_bank", "Bank"),
+      T("b_acct", "Account", { mode: "numeric" }), { hint: "Include front/back IC and bank statement." }] }
   ];
+  /* SA Entitlement, OM Approval and Contributions are filled by the manager on the printed PDF, so they are not in the app. */
 
   function el(tag, attrs, kids) {
     var e = document.createElement(tag);
@@ -68,7 +65,13 @@
       return el("div", { class: "money" }, [el("div", { class: "lbl", text: f.label }),
         el("input", { "data-k": f.key, type: "text", inputmode: "decimal", placeholder: "0.00" })]);
     }
+    if (f.type === "select") {
+      var sel = el("select", { "data-k": f.key });
+      f.options.forEach(function (o) { sel.appendChild(el("option", { value: o, text: o || "- select -" })); });
+      return el("label", { class: "f" }, [el("span", { text: f.label }), sel]);
+    }
     var input = el("input", { "data-k": f.key, type: f.type });
+    if (f.type === "text") { input.setAttribute("autocapitalize", "characters"); input.className = "caps"; }
     if (f.mode) input.setAttribute("inputmode", f.mode);
     return el("label", { class: "f" }, [el("span", { text: f.label }), input]);
   }
@@ -85,19 +88,26 @@
   function emptyForm() { return { regdate: "" }; }
   function fillForm(data) {
     document.querySelectorAll("#form [data-k]").forEach(function (i) {
-      var v = data[i.getAttribute("data-k")]; i.value = v === undefined || v === null ? "" : v;
+      var v = data[i.getAttribute("data-k")]; v = v === undefined || v === null ? "" : v;
+      if (i.tagName === "SELECT" && v && !Array.prototype.some.call(i.options, function (o) { return o.value === v; })) i.appendChild(el("option", { value: v, text: v }));
+      i.value = v;
     });
     refreshCalc();
   }
   function onInput(e) {
     var k = e.target.getAttribute && e.target.getAttribute("data-k");
     if (!k || !current) return;
-    current.data[k] = e.target.value; refreshCalc(); scheduleSave();
+    var t = e.target;
+    if (t.tagName === "INPUT" && t.type === "text" && t.className === "caps") {
+      var up = t.value.toUpperCase();
+      if (up !== t.value) { var p = t.selectionStart; t.value = up; try { t.setSelectionRange(p, p); } catch (x) { /* ignore */ } }
+    }
+    current.data[k] = t.value; refreshCalc(); scheduleSave();
   }
   function refreshCalc() {
     if (!current) return;
     var c = compute(current.data);
-    ["totalSelling", "entTotal"].forEach(function (k) { var n = $("c_" + k); if (n) n.textContent = rm(c[k]); });
+    ["totalSelling"].forEach(function (k) { var n = $("c_" + k); if (n) n.textContent = rm(c[k]); });
     $("dueVal").textContent = rm(c.totalSelling);
   }
   var saveTimer = null;
@@ -152,7 +162,7 @@
     var o = { id: uid(), updated: Date.now(), data: emptyForm() };
     var last = forms[0] && forms[0].data;
     if (last && last.sa) o.data.sa = last.sa;
-    o.data.month = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"][new Date().getMonth()] + " " + new Date().getFullYear();
+    o.data.month = MONTHS[new Date().getMonth()];
     forms.unshift(o); saveAll(forms); openForm(o.id);
   }
 
@@ -162,6 +172,7 @@
     var c = compute(d), L = 20, R = 190;
     function lab(t, x, y, bold) { doc.setFont("helvetica", bold === false ? "normal" : "bold"); doc.setFontSize(9.5); doc.text(t, x, y); }
     function line(x1, x2, y, val, right) {
+      if (typeof val === "string") val = val.toUpperCase();
       doc.setDrawColor(90); doc.setLineWidth(0.2); doc.line(x1, y + 1.2, x2, y + 1.2);
       if (val) { doc.setFont("helvetica", "normal"); doc.setFontSize(10); if (right) doc.text(String(val), x2 - 1, y, { align: "right" }); else doc.text(String(val), x1 + 1, y); }
     }
@@ -176,21 +187,20 @@
       lab(r[0], L, y); lab(":", 85, y); line(88, R, y, v, true);
     });
     lab("SA ENTITLEMENT", L, 190); doc.setFontSize(7); doc.text("*PLS DON'T FILL IN", 52, 190);
-    var cols = ["BODY COMM", "HP", "INSURANCE", "MI", "VI", "TOTAL"], vals = [d.ent_body, d.ent_hp, d.ent_ins, d.ent_mi, d.ent_vi, c.entTotal];
+    var cols = ["BODY COMM", "HP", "INSURANCE", "MI", "VI", "TOTAL"];
     var cw = 28.3, x0 = L;
     cols.forEach(function (h, i) {
       var x = x0 + i * cw;
       doc.setFillColor(217, 225, 242); doc.rect(x, 194, cw, 8, "FD"); doc.rect(x, 202, cw, 9, "S");
       doc.setFont("helvetica", "bold"); doc.setFontSize(8.5); doc.text(h, x + cw / 2, 199.3, { align: "center" });
-      var v = vals[i]; if (v !== "" && v !== undefined && (i === 5 || num(v) !== 0)) { doc.setFont("helvetica", i === 5 ? "bold" : "normal"); doc.setFontSize(9.5); doc.text(money(num(v)), x + cw - 1.5, 208, { align: "right" }); }
     });
-    lab("OM APPROVAL", 95, 224); lab(":", 125, 224); line(128, R, 224, d.om);
+    lab("OM APPROVAL", 95, 224); lab(":", 125, 224); line(128, R, 224, "");
     doc.setFont("helvetica", "bold"); doc.setFontSize(9.5); doc.text("BROKER DETAILS", L, 238); doc.line(L, 239, L + 28, 239);
     [["NAME", d.b_name], ["IC", d.b_ic], ["BANK", d.b_bank], ["ACCOUNT", d.b_acct]].forEach(function (r, i) {
       var y = 246 + i * 8; lab(r[0], L, y); lab(":", 52, y); line(55, 102, y, r[1]);
     });
     doc.setFont("helvetica", "italic"); doc.setFontSize(7); doc.text("*INCLUDE FRONT/BACK IC AND BANK STATEMENT", L, 281);
-    [["SA CONTRIBUTION", d.sa_contrib], ["COMP. CONTRIBUTION", d.comp_contrib], ["OTHERS", d.others]].forEach(function (r, i) {
+    [["SA CONTRIBUTION", ""], ["COMP. CONTRIBUTION", ""], ["OTHERS", ""]].forEach(function (r, i) {
       var y = 255 + i * 8.5;
       doc.setDrawColor(0); doc.rect(108, y, 52, 8.5, "S"); doc.rect(160, y, 30, 8.5, "S");
       lab(r[0], 110, y + 5.6);
