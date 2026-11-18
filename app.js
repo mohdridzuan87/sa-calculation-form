@@ -35,7 +35,7 @@
   /* ---------- schema ---------- */
   var T = function (key, label, o) { return Object.assign({ key: key, label: label, type: "text" }, o || {}); };
   var M = function (key, label) { return { key: key, label: label, money: true }; };
-  var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+  var MONTHS = ["JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE", "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"];
   var SECTIONS = [
     { title: "1. Customer & vehicle", open: true, fields: [
       T("customer", "Customer"), T("sa", "SA"), { key: "month", label: "Month & Year", type: "monthyear" }, T("regno", "Reg No"),
@@ -108,7 +108,7 @@
       i.value = v;
       if (i.className === "mny" && v) i.dispatchEvent(new Event("input", { bubbles: true }));
     });
-    var parts = String(data.month || "").split(" "), mm = parts[0], yy = parts[1] || "";
+    var parts = String(data.month || "").split(" "), mm = String(parts[0] || "").toUpperCase(), yy = parts[1] || "";
     var ms2 = document.querySelector('[data-my="m"]'), ys2 = document.querySelector('[data-my="y"]');
     if (ms2 && ys2) {
       ms2.value = MONTHS.indexOf(mm) >= 0 ? mm : "";
@@ -209,7 +209,11 @@
     function line(x1, x2, y, val, right) {
       if (typeof val === "string") val = val.toUpperCase();
       doc.setDrawColor(90); doc.setLineWidth(0.2); doc.line(x1, y + 1.2, x2, y + 1.2);
-      if (val) { doc.setFont("helvetica", "normal"); doc.setFontSize(10); if (right) doc.text(String(val), x2 - 1, y, { align: "right" }); else doc.text(String(val), x1 + 1, y); }
+      if (val) {
+        var fs = 13; doc.setFont("helvetica", "bold"); doc.setFontSize(fs);
+        while (fs > 7 && doc.getTextWidth(String(val)) > x2 - x1 - 2) { fs -= 0.5; doc.setFontSize(fs); }
+        doc.text(String(val), x1 + 1, y);
+      }
     }
     doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.text("CALCULATIONS FORM", 105, 18, { align: "center" });
     var head = [["CUSTOMER", d.customer], ["SA", d.sa], ["MONTH", d.month], ["REG NO", d.regno], ["REG DATE", fmtDate(d.regdate)], ["MODEL", d.model]];
@@ -219,7 +223,7 @@
       ["LESS DOWNPAYMENT - 3", d.dp3], ["LESS EXTRA DISCOUNTING", d.extra], ["BROKER CLAIMS", d.broker_claims]];
     rows.forEach(function (r, i) {
       var y = 90 + i * 8, v = (r[1] === "" || r[1] === undefined) ? "" : money(num(r[1]));
-      lab(r[0], L, y); lab(":", 85, y); line(88, R, y, v, true);
+      lab(r[0], L, y); lab(":", 85, y); line(88, R, y, v);
     });
     lab("SA ENTITLEMENT", L, 190); doc.setFontSize(7); doc.text("*PLS DON'T FILL IN", 52, 190);
     var cols = ["BODY COMM", "HP", "INSURANCE", "MI", "VI", "TOTAL"];
