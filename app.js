@@ -38,7 +38,7 @@
   var MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   var SECTIONS = [
     { title: "1. Customer & vehicle", open: true, fields: [
-      T("customer", "Customer"), T("sa", "SA"), T("month", "Month", { type: "select", options: [""].concat(MONTHS) }), T("regno", "Reg No"),
+      T("customer", "Customer"), T("sa", "SA"), { key: "month", label: "Month & Year", type: "monthyear" }, T("regno", "Reg No"),
       T("regdate", "Reg Date", { type: "date" }), T("model", "Model")] },
     { title: "2. Pricing", open: true, fields: [
       M("otr", "OTR Price w/out Insurance"), M("ins", "Insurance"), { calc: "totalSelling", label: "TOTAL SELLING PRICE", big: true },
@@ -65,6 +65,15 @@
       return el("div", { class: "money" }, [el("div", { class: "lbl", text: f.label }),
         el("input", { "data-k": f.key, type: "text", inputmode: "decimal", placeholder: "0.00", class: "mny" })]);
     }
+    if (f.type === "monthyear") {
+      var ms = el("select", { "data-my": "m" }), ys = el("select", { "data-my": "y" });
+      ms.appendChild(el("option", { value: "", text: "- month -" }));
+      MONTHS.forEach(function (m) { ms.appendChild(el("option", { value: m, text: m })); });
+      ys.appendChild(el("option", { value: "", text: "- year -" }));
+      var y0 = new Date().getFullYear();
+      for (var y = y0 - 1; y <= y0 + 2; y++) ys.appendChild(el("option", { value: String(y), text: String(y) }));
+      return el("label", { class: "f" }, [el("span", { text: f.label }), el("div", { class: "row2" }, [ms, ys])]);
+    }
     if (f.type === "select") {
       var sel = el("select", { "data-k": f.key });
       f.options.forEach(function (o) { sel.appendChild(el("option", { value: o, text: o || "- select -" })); });
@@ -83,6 +92,12 @@
       form.appendChild(d);
     });
     form.addEventListener("input", onInput);
+    form.addEventListener("change", function (e) {
+      if (!e.target.getAttribute("data-my") || !current) return;
+      var m = form.querySelector('[data-my="m"]').value, y = form.querySelector('[data-my="y"]').value;
+      current.data.month = [m, y].filter(Boolean).join(" ");
+      scheduleSave();
+    });
   }
 
   function emptyForm() { return { regdate: "" }; }
@@ -93,6 +108,13 @@
       i.value = v;
       if (i.className === "mny" && v) i.dispatchEvent(new Event("input", { bubbles: true }));
     });
+    var parts = String(data.month || "").split(" "), mm = parts[0], yy = parts[1] || "";
+    var ms2 = document.querySelector('[data-my="m"]'), ys2 = document.querySelector('[data-my="y"]');
+    if (ms2 && ys2) {
+      ms2.value = MONTHS.indexOf(mm) >= 0 ? mm : "";
+      if (yy && !Array.prototype.some.call(ys2.options, function (o) { return o.value === yy; })) ys2.appendChild(el("option", { value: yy, text: yy }));
+      ys2.value = /^[0-9]{4}$/.test(yy) ? yy : "";
+    }
     refreshCalc();
   }
   function onInput(e) {
@@ -175,7 +197,7 @@
     var o = { id: uid(), updated: Date.now(), data: emptyForm() };
     var last = forms[0] && forms[0].data;
     if (last && last.sa) o.data.sa = last.sa;
-    o.data.month = MONTHS[new Date().getMonth()];
+    o.data.month = MONTHS[new Date().getMonth()] + " " + new Date().getFullYear();
     forms.unshift(o); saveAll(forms); openForm(o.id);
   }
 
