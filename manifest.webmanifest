@@ -1,6 +1,6 @@
 {
-  "name": "Toyota SA Calculation Form",
-  "short_name": "SA Calc",
+  "name": "SA & Broker Comm Claim",
+  "short_name": "SA & Broker Comm Claim",
   "description": "Fill the SA Calculations Form and export an A4 PDF.",
   "start_url": "./index.html",
   "scope": "./",

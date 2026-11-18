@@ -1,5 +1,5 @@
 /* Offline cache for the SA Calc app. Bump VERSION when files change. */
-var VERSION = "sacalc-v10";
+var VERSION = "sacalc-v11";
 var FILES = ["./", "index.html", "style.css", "app.js", "vendor/jspdf.umd.min.js",
   "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png"];
 

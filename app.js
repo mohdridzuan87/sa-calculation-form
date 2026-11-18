@@ -159,7 +159,7 @@
   function showList() {
     saveCurrent(); current = null;
     $("listView").hidden = false; $("editView").hidden = true; $("editBar").hidden = true;
-    $("backBtn").hidden = true; $("title").textContent = "SA Calculations";
+    $("backBtn").hidden = true; $("title").textContent = "SA & Broker Comm Claim";
     renderList(); window.scrollTo(0, 0);
   }
   function renderList() {
