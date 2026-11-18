@@ -159,7 +159,7 @@
   function showList() {
     saveCurrent(); current = null;
     $("listView").hidden = false; $("editView").hidden = true; $("editBar").hidden = true;
-    $("backBtn").hidden = true; $("title").textContent = "SA & Broker Comm Claim";
+    $("backBtn").hidden = true; $("title").textContent = "SA & Broker Comm Claim"; document.querySelector(".brand").hidden = false;
     renderList(); window.scrollTo(0, 0);
   }
   function renderList() {
@@ -190,7 +190,7 @@
     var o = forms.find(function (x) { return x.id === id; }); if (!o) return;
     current = o;
     $("listView").hidden = true; $("editView").hidden = false; $("editBar").hidden = false;
-    $("backBtn").hidden = false; $("title").textContent = "Calculations Form";
+    $("backBtn").hidden = false; $("title").textContent = "SA/Broker Commission Calculation"; document.querySelector(".brand").hidden = true;
     fillForm(o.data); window.scrollTo(0, 0); location.hash = "#edit";
   }
   function newForm() {

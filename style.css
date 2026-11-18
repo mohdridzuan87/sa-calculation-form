@@ -87,3 +87,4 @@ details.sec[open] > summary { border-bottom: 1px solid var(--line); }
 .f input.caps { text-transform: uppercase; }
 
 .f .row2 select { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--input); color: var(--ink); }
+.bar-title { font-size: 16px; }
