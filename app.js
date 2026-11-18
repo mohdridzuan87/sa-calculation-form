@@ -91,6 +91,7 @@
       var v = data[i.getAttribute("data-k")]; v = v === undefined || v === null ? "" : v;
       if (i.tagName === "SELECT" && v && !Array.prototype.some.call(i.options, function (o) { return o.value === v; })) i.appendChild(el("option", { value: v, text: v }));
       i.value = v;
+      if (i.className === "mny" && v) i.dispatchEvent(new Event("input", { bubbles: true }));
     });
     refreshCalc();
   }

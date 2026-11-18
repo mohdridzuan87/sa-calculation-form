@@ -1,5 +1,5 @@
 /* Offline cache for the SA Calc app. Bump VERSION when files change. */
-var VERSION = "sacalc-v4";
+var VERSION = "sacalc-v5";
 var FILES = ["./", "index.html", "style.css", "app.js", "vendor/jspdf.umd.min.js",
   "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png"];
 
@@ -13,11 +13,12 @@ self.addEventListener("activate", function (e) {
 });
 self.addEventListener("fetch", function (e) {
   if (e.request.method !== "GET") return;
-  e.respondWith(caches.match(e.request, { ignoreSearch: true }).then(function (hit) {
-    return hit || fetch(e.request).then(function (res) {
-      var copy = res.clone();
-      caches.open(VERSION).then(function (c) { c.put(e.request, copy); });
-      return res;
-    });
-  }).catch(function () { return caches.match("index.html"); }));
+  /* network first so updates reach phones at once; cache is the offline fallback */
+  e.respondWith(fetch(e.request).then(function (res) {
+    var copy = res.clone();
+    caches.open(VERSION).then(function (c) { c.put(e.request, copy); });
+    return res;
+  }).catch(function () {
+    return caches.match(e.request, { ignoreSearch: true }).then(function (hit) { return hit || caches.match("index.html"); });
+  }));
 });
