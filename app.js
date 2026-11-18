@@ -71,7 +71,7 @@
       MONTHS.forEach(function (m) { ms.appendChild(el("option", { value: m, text: m })); });
       ys.appendChild(el("option", { value: "", text: "- year -" }));
       var y0 = new Date().getFullYear();
-      for (var y = y0 - 1; y <= y0 + 2; y++) ys.appendChild(el("option", { value: String(y), text: String(y) }));
+      for (var y = y0 - 1; y <= 2070; y++) ys.appendChild(el("option", { value: String(y), text: String(y) }));
       return el("label", { class: "f" }, [el("span", { text: f.label }), el("div", { class: "row2" }, [ms, ys])]);
     }
     if (f.type === "select") {
