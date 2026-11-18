@@ -222,7 +222,7 @@
       ["LESS SPPN/MLM", d.sppn], ["LESS BOOKING", d.booking], ["LESS DOWNPAYMENT - 1", d.dp1], ["LESS DOWNPAYMENT - 2", d.dp2],
       ["LESS DOWNPAYMENT - 3", d.dp3], ["LESS EXTRA DISCOUNTING", d.extra], ["BROKER CLAIMS", d.broker_claims]];
     rows.forEach(function (r, i) {
-      var y = 90 + i * 8, v = (r[1] === "" || r[1] === undefined) ? "" : money(num(r[1]));
+      var y = 90 + i * 8, v = (r[1] === "" || r[1] === undefined) ? "" : money(num(r[1])).replace(/\.00$/, "");
       lab(r[0], L, y); lab(":", 85, y); line(88, R, y, v);
     });
     lab("SA ENTITLEMENT", L, 190); doc.setFontSize(7); doc.text("*PLS DON'T FILL IN", 52, 190);
