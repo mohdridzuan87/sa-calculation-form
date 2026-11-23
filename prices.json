@@ -1,0 +1,260 @@
+{
+ "updated": "2026-11-23",
+ "checked": "2026-11-23",
+ "source": "https://www.toyota.com.my/en/price-and-model-tools/price-list.html",
+ "note": "OTR price without insurance, Peninsular Malaysia, Individual Private",
+ "models": [
+  {
+   "id": "alphard-2-4-t-executive-lounge",
+   "name": "Alphard 2.4T Executive Lounge",
+   "otr": 548000,
+   "url": "https://www.toyota.com.my/en/models/alphard/alphard-2-4-t-executive-lounge.html"
+  },
+  {
+   "id": "bz4x",
+   "name": "bZ4X",
+   "otr": 220000,
+   "url": "https://www.toyota.com.my/en/models/bz4x/bz4x.html"
+  },
+  {
+   "id": "camry-2-5-hev",
+   "name": "CAMRY 2.5 HEV",
+   "otr": 248800,
+   "url": "https://www.toyota.com.my/en/models/camry-hybrid-electric/camry-2-5-hev.html"
+  },
+  {
+   "id": "camry",
+   "name": "Camry 2.5V AT",
+   "otr": 221800,
+   "url": "https://www.toyota.com.my/en/models/camry-hybrid-electric/camry.html"
+  },
+  {
+   "id": "corolla-1-8g",
+   "name": "Corolla 1.8G",
+   "otr": 144800,
+   "url": "https://www.toyota.com.my/en/models/corolla/corolla-1-8g.html"
+  },
+  {
+   "id": "corolla-cross-1-8v-at",
+   "name": "Corolla Cross 1.8V AT",
+   "otr": 133800,
+   "url": "https://www.toyota.com.my/en/models/corolla-cross-hybrid-electric/corolla-cross-1-8v-at.html"
+  },
+  {
+   "id": "corolla-cross-hev-gr-sport",
+   "name": "Corolla Cross HEV GR Sport",
+   "otr": 148800,
+   "url": "https://www.toyota.com.my/en/models/corolla-cross-hybrid-electric/corolla-cross-hev-gr-sport.html"
+  },
+  {
+   "id": "corolla-cross-hybrid-electric",
+   "name": "Corolla Cross Hybrid Electric",
+   "otr": 140800,
+   "url": "https://www.toyota.com.my/en/models/corolla-cross-hybrid-electric/corolla-cross-hybrid-electric.html"
+  },
+  {
+   "id": "corolla-gr-sport",
+   "name": "Corolla GR Sport",
+   "otr": 149800,
+   "url": "https://www.toyota.com.my/en/models/corolla/corolla-gr-sport.html"
+  },
+  {
+   "id": "fortuner-2-4-at-4wd",
+   "name": "Fortuner 2.4 AT 4WD",
+   "otr": 195880,
+   "url": "https://www.toyota.com.my/en/models/fortuner/fortuner-2-4-at-4wd.html"
+  },
+  {
+   "id": "fortuner-2-7-srz-at-4wd",
+   "name": "Fortuner 2.7 SRZ AT 4WD",
+   "otr": 202880,
+   "url": "https://www.toyota.com.my/en/models/fortuner/fortuner-2-7-srz-at-4wd.html"
+  },
+  {
+   "id": "fortuner-2-8-vrz-at-4wd",
+   "name": "Fortuner 2.8 VRZ AT 4WD",
+   "otr": 241880,
+   "url": "https://www.toyota.com.my/en/models/fortuner/fortuner-2-8-vrz-at-4wd.html"
+  },
+  {
+   "id": "gr-corolla-at",
+   "name": "GR Corolla A/T",
+   "otr": 378950,
+   "url": "https://www.toyota.com.my/en/models/gr-corolla/gr-corolla-at.html"
+  },
+  {
+   "id": "gr-corolla-mt",
+   "name": "GR Corolla M/T",
+   "otr": 368950,
+   "url": "https://www.toyota.com.my/en/models/gr-corolla/gr-corolla-mt.html"
+  },
+  {
+   "id": "gr-yaris-at",
+   "name": "GR Yaris A/T",
+   "otr": 325600,
+   "url": "https://www.toyota.com.my/en/models/gr-yaris/gr-yaris-at.html"
+  },
+  {
+   "id": "gr-yaris-mt",
+   "name": "GR Yaris M/T",
+   "otr": 315600,
+   "url": "https://www.toyota.com.my/en/models/gr-yaris/gr-yaris-mt.html"
+  },
+  {
+   "id": "gr86-at",
+   "name": "GR86 A/T",
+   "otr": 306000,
+   "url": "https://www.toyota.com.my/en/models/gr86/gr86-at.html"
+  },
+  {
+   "id": "gr86-mt",
+   "name": "GR86 M/T",
+   "otr": 296000,
+   "url": "https://www.toyota.com.my/en/models/gr86/gr86-mt.html"
+  },
+  {
+   "id": "harrier-hybrid-electric",
+   "name": "Harrier 2.5 HEV",
+   "otr": 289000,
+   "url": "https://www.toyota.com.my/en/models/harrier-hybrid-electric/harrier-hybrid-electric.html"
+  },
+  {
+   "id": "hiace-panel-van-3-0-turbo-diesel",
+   "name": "Hiace Panel Van 3.0 Turbo Diesel",
+   "otr": 127800,
+   "url": "https://www.toyota.com.my/en/models/hiace/hiace-panel-van-3-0-turbo-diesel.html"
+  },
+  {
+   "id": "hiace-slwb-2-8-d-turbo-diesel",
+   "name": "Hiace SLWB 2.8 Turbo Diesel",
+   "otr": 172000,
+   "url": "https://www.toyota.com.my/en/models/hiace-slwb/hiace-slwb-2-8-d-turbo-diesel.html"
+  },
+  {
+   "id": "hilux-bev",
+   "name": "Hilux D/CAB BEV",
+   "otr": 226300,
+   "url": "https://www.toyota.com.my/en/models/hilux/hilux-bev.html"
+  },
+  {
+   "id": "hilux-double-cab-2-4e-at-4wd",
+   "name": "Hilux Double Cab 2.4E AT 4WD",
+   "otr": 119880,
+   "url": "https://www.toyota.com.my/en/models/hilux/hilux-double-cab-2-4e-at-4wd.html"
+  },
+  {
+   "id": "hilux-double-cab-2-4e-mt-4wd",
+   "name": "Hilux Double Cab 2.4E MT 4WD",
+   "otr": 117880,
+   "url": "https://www.toyota.com.my/en/models/hilux/hilux-double-cab-2-4e-mt-4wd.html"
+  },
+  {
+   "id": "hilux-double-cab-2-4v-at-4wd",
+   "name": "Hilux Double Cab 2.4V AT 4WD",
+   "otr": 149580,
+   "url": "https://www.toyota.com.my/en/models/hilux/hilux-double-cab-2-4v-at-4wd.html"
+  },
+  {
+   "id": "hilux-double-cab-2-8-rouge-at-4wd",
+   "name": "Hilux Double Cab 2.8 Rogue AT 4WD",
+   "otr": 163080,
+   "url": "https://www.toyota.com.my/en/models/hilux/hilux-double-cab-2-8-rouge-at-4wd.html"
+  },
+  {
+   "id": "hilux-gr-sport",
+   "name": "Hilux GR Sport",
+   "otr": 173280,
+   "url": "https://www.toyota.com.my/en/models/hilux/hilux-gr-sport.html"
+  },
+  {
+   "id": "hilux-single-cab-2-4-mt-4wd",
+   "name": "Hilux Single Cab 2.4 MT 4WD",
+   "otr": 104880,
+   "url": "https://www.toyota.com.my/en/models/hilux/hilux-single-cab-2-4-mt-4wd.html"
+  },
+  {
+   "id": "zenix-hybrid-electric",
+   "name": "Innova Zenix 2.0 HEV",
+   "otr": 202000,
+   "url": "https://www.toyota.com.my/en/models/zenix/zenix-hybrid-electric.html"
+  },
+  {
+   "id": "toyota-innova-zenix-2-0v",
+   "name": "Innova Zenix 2.0V",
+   "otr": 165000,
+   "url": "https://www.toyota.com.my/en/models/zenix/toyota-innova-zenix-2-0v.html"
+  },
+  {
+   "id": "urban-cruiser",
+   "name": "Urban Cruiser",
+   "otr": 198000,
+   "url": "https://www.toyota.com.my/en/models/urban-cruiser/urban-cruiser.html"
+  },
+  {
+   "id": "vellfire-2-5",
+   "name": "Vellfire 2.5",
+   "otr": 448000,
+   "url": "https://www.toyota.com.my/en/models/vellfire/vellfire-2-5.html"
+  },
+  {
+   "id": "vellfire-hybrid-electric",
+   "name": "Vellfire 2.5 HEV AT Executive Lounge",
+   "otr": 549900,
+   "url": "https://www.toyota.com.my/en/models/vellfire/vellfire-hybrid-electric.html"
+  },
+  {
+   "id": "toyota-veloz-1-5-at",
+   "name": "Veloz 1.5 AT",
+   "otr": 95000,
+   "url": "https://www.toyota.com.my/en/models/veloz/toyota-veloz-1-5-at.html"
+  },
+  {
+   "id": "vios-hybrid-electric",
+   "name": "Vios 1.5 HEV AT",
+   "otr": 103900,
+   "url": "https://www.toyota.com.my/en/models/vios/vios-hybrid-electric.html"
+  },
+  {
+   "id": "vios-hev-gr-sport",
+   "name": "Vios 1.5 HEV GR Sport",
+   "otr": 109900,
+   "url": "https://www.toyota.com.my/en/models/vios/vios-hev-gr-sport.html"
+  },
+  {
+   "id": "new-vios-1-5e-at",
+   "name": "Vios 1.5E AT",
+   "otr": 90600,
+   "url": "https://www.toyota.com.my/en/models/vios/new-vios-1-5e-at.html"
+  },
+  {
+   "id": "new-vios-1-5g-at",
+   "name": "Vios 1.5G AT",
+   "otr": 96600,
+   "url": "https://www.toyota.com.my/en/models/vios/new-vios-1-5g-at.html"
+  },
+  {
+   "id": "yaris-1-5e-at",
+   "name": "Yaris 1.5E AT",
+   "otr": 90400,
+   "url": "https://www.toyota.com.my/en/models/yaris/yaris-1-5e-at.html"
+  },
+  {
+   "id": "yaris-1-5g-at",
+   "name": "Yaris 1.5G AT",
+   "otr": 96400,
+   "url": "https://www.toyota.com.my/en/models/yaris/yaris-1-5g-at.html"
+  },
+  {
+   "id": "yaris-cross",
+   "name": "Yaris Cross 1.5S",
+   "otr": 99900,
+   "url": "https://www.toyota.com.my/en/models/yaris-cross-hybrid-electric/yaris-cross.html"
+  },
+  {
+   "id": "yaris-cross-hev",
+   "name": "Yaris Cross 1.5S HEV",
+   "otr": 109900,
+   "url": "https://www.toyota.com.my/en/models/yaris-cross-hybrid-electric/yaris-cross-hev.html"
+  }
+ ]
+}

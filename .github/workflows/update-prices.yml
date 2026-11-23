@@ -1,0 +1,26 @@
+name: Update Toyota prices
+
+on:
+  schedule:
+    - cron: "0 1 28 * *"   # 28th of every month, 01:00 UTC = 09:00 Malaysia time
+  workflow_dispatch:        # allow a manual run from the Actions tab
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Fetch model list and OTR prices from toyota.com.my
+        run: node scripts/update-prices.mjs
+      - name: Commit if changed
+        run: |
+          git config user.name "price-sync"
+          git config user.email "price-sync@users.noreply.github.com"
+          git add prices.json
+          if git diff --cached --quiet; then echo "No changes"; else git commit -m "Update Toyota prices $(date -u +%Y-%m-%d)" && git push; fi

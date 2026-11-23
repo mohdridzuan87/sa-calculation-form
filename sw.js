@@ -1,7 +1,7 @@
 /* Offline cache for the SA Calc app. Bump VERSION when files change. */
-var VERSION = "sacalc-v12";
+var VERSION = "sacalc-v14";
 var FILES = ["./", "index.html", "style.css", "app.js", "vendor/jspdf.umd.min.js",
-  "manifest.webmanifest", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png"];
+  "manifest.webmanifest", "prices.json", "icons/icon-192.png", "icons/icon-512.png", "icons/maskable-512.png"];
 
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(VERSION).then(function (c) { return c.addAll(FILES); }).then(function () { return self.skipWaiting(); }));

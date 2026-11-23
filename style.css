@@ -88,3 +88,8 @@ details.sec[open] > summary { border-bottom: 1px solid var(--line); }
 
 .f .row2 select { width: 100%; font: inherit; font-size: 16px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--input); color: var(--ink); }
 .bar-title { font-size: 16px; }
+
+.money { grid-template-columns: 1fr 170px; }
+.mw { position: relative; }
+.mw .rmtag { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 14px; font-weight: 700; color: var(--muted); pointer-events: none; }
+.mw input { padding-left: 38px; }

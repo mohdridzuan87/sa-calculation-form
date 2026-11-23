@@ -32,6 +32,35 @@
   var forms = load();
   var current = null;
 
+  /* ---------- Toyota Malaysia model list + OTR prices (prices.json, refreshed on the 28th by GitHub Actions) ---------- */
+  var PRICE_KEY = "sacalc.prices.v1";
+  var PRICES = { models: [], updated: "" };
+  try { var cachedP = JSON.parse(localStorage.getItem(PRICE_KEY)); if (cachedP && cachedP.models) PRICES = cachedP; } catch (e) { /* none yet */ }
+  function modelByName(n) { return PRICES.models.filter(function (m) { return m.name === n; })[0]; }
+  function priceNote() {
+    if (!PRICES.models.length) return "Model list loads from toyota.com.my when you are online.";
+    return "OTR w/out insurance, Peninsular Malaysia, from toyota.com.my (updated " + fmtDate(PRICES.updated) + "). You can edit the amount.";
+  }
+  function populateModels() {
+    var sel = document.querySelector('[data-k="model"]'); if (!sel) return;
+    var keep = sel.value;
+    sel.innerHTML = "";
+    sel.appendChild(el("option", { value: "", text: "- select model -" }));
+    PRICES.models.forEach(function (m) { sel.appendChild(el("option", { value: m.name, text: m.name })); });
+    if (keep && !modelByName(keep)) sel.appendChild(el("option", { value: keep, text: keep }));
+    sel.value = keep;
+    var note = $("priceNote"); if (note) note.textContent = priceNote();
+  }
+  function loadPrices() {
+    fetch("prices.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : Promise.reject(); }).then(function (p) {
+      if (!p || !p.models || !p.models.length) return;
+      PRICES = p;
+      try { localStorage.setItem(PRICE_KEY, JSON.stringify(p)); } catch (e) { /* ignore */ }
+      populateModels();
+    }).catch(function () { /* offline: keep cached list */ });
+  }
+  function fmt2(v) { return v === "" || v === undefined || v === null ? "" : money(num(v)); }
+
   /* ---------- schema ---------- */
   var T = function (key, label, o) { return Object.assign({ key: key, label: label, type: "text" }, o || {}); };
   var M = function (key, label) { return { key: key, label: label, money: true }; };
@@ -39,7 +68,7 @@
   var SECTIONS = [
     { title: "1. Customer & vehicle", open: true, fields: [
       T("customer", "Customer"), T("sa", "SA"), { key: "month", label: "Month & Year", type: "monthyear" }, T("regno", "Reg No"),
-      T("regdate", "Reg Date", { type: "date" }), T("model", "Model")] },
+      T("regdate", "Reg Date", { type: "date" }), { key: "model", label: "Model", type: "model" }] },
     { title: "2. Pricing", open: true, fields: [
       M("otr", "OTR Price w/out Insurance"), M("ins", "Insurance"), { calc: "totalSelling", label: "TOTAL SELLING PRICE", big: true },
       M("loan", "Less Loan Amount"), M("sppn", "Less SPPN/MLM"), M("booking", "Less Booking"),
@@ -63,7 +92,8 @@
     if (f.calc) return el("div", { class: "calc" + (f.big ? " big" : "") }, [el("span", { text: f.label }), el("span", { id: "c_" + f.calc, text: "-" })]);
     if (f.money) {
       return el("div", { class: "money" }, [el("div", { class: "lbl", text: f.label }),
-        el("input", { "data-k": f.key, type: "text", inputmode: "decimal", placeholder: "0.00", class: "mny" })]);
+        el("div", { class: "mw" }, [el("span", { class: "rmtag", text: "RM" }),
+          el("input", { "data-k": f.key, type: "text", inputmode: "decimal", placeholder: "0.00", class: "mny" })])]);
     }
     if (f.type === "monthyear") {
       var ms = el("select", { "data-my": "m" }), ys = el("select", { "data-my": "y" });
@@ -73,6 +103,10 @@
       var y0 = new Date().getFullYear();
       for (var y = y0 - 1; y <= 2070; y++) ys.appendChild(el("option", { value: String(y), text: String(y) }));
       return el("label", { class: "f" }, [el("span", { text: f.label }), el("div", { class: "row2" }, [ms, ys])]);
+    }
+    if (f.type === "model") {
+      var msel = el("select", { "data-k": "model" });
+      return el("label", { class: "f" }, [el("span", { text: f.label }), msel, el("div", { class: "hint", id: "priceNote" })]);
     }
     if (f.type === "select") {
       var sel = el("select", { "data-k": f.key });
@@ -91,7 +125,12 @@
       if (s.open) d.open = true;
       form.appendChild(d);
     });
+    populateModels();
     form.addEventListener("input", onInput);
+    form.addEventListener("focusout", function (e) {
+      var t = e.target;
+      if (t.className === "mny" && current) { t.value = fmt2(t.value); current.data[t.getAttribute("data-k")] = t.value; refreshCalc(); scheduleSave(); }
+    });
     form.addEventListener("change", function (e) {
       if (!e.target.getAttribute("data-my") || !current) return;
       var m = form.querySelector('[data-my="m"]').value, y = form.querySelector('[data-my="y"]').value;
@@ -102,11 +141,12 @@
 
   function emptyForm() { return { regdate: "" }; }
   function fillForm(data) {
+    populateModels();
     document.querySelectorAll("#form [data-k]").forEach(function (i) {
       var v = data[i.getAttribute("data-k")]; v = v === undefined || v === null ? "" : v;
       if (i.tagName === "SELECT" && v && !Array.prototype.some.call(i.options, function (o) { return o.value === v; })) i.appendChild(el("option", { value: v, text: v }));
-      i.value = v;
-      if (i.className === "mny" && v) i.dispatchEvent(new Event("input", { bubbles: true }));
+      i.value = i.className === "mny" ? fmt2(v) : v;
+      if (i.className === "mny" && v) data[i.getAttribute("data-k")] = i.value;
     });
     var parts = String(data.month || "").split(" "), mm = String(parts[0] || "").toUpperCase(), yy = parts[1] || "";
     var ms2 = document.querySelector('[data-my="m"]'), ys2 = document.querySelector('[data-my="y"]');
@@ -122,11 +162,16 @@
     if (!k || !current) return;
     var t = e.target;
     if (t.className === "mny") {
+      /* RM amount: commas + always two decimals (12,000.00) while typing */
       var pos = t.selectionStart, before = t.value.slice(0, pos).replace(/[^0-9.]/g, "").length;
-      var raw = t.value.replace(/[^0-9.]/g, ""), dot = raw.indexOf(".");
-      if (dot >= 0) raw = raw.slice(0, dot + 1) + raw.slice(dot + 1).replace(/\./g, "").slice(0, 2);
-      var ip = dot >= 0 ? raw.slice(0, dot) : raw, fp = dot >= 0 ? raw.slice(dot) : "";
-      var out = ip.replace(/^0+(?=\d)/, "").replace(/\B(?=(\d{3})+(?!\d))/g, ",") + fp;
+      var raw = t.value.replace(/[^0-9.]/g, "");
+      var out = "";
+      if (raw !== "") {
+        var dot = raw.indexOf(".");
+        var ip = (dot >= 0 ? raw.slice(0, dot) : raw).replace(/^0+(?=\d)/, "") || "0";
+        var fp = ((dot >= 0 ? raw.slice(dot + 1).replace(/\./g, "") : "") + "00").slice(0, 2);
+        out = ip.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "." + fp;
+      }
       if (out !== t.value) {
         t.value = out;
         var n = 0, np = 0; while (np < out.length && n < before) { if (/[0-9.]/.test(out[np])) n++; np++; }
@@ -137,7 +182,12 @@
       var up = t.value.toUpperCase();
       if (up !== t.value) { var p = t.selectionStart; t.value = up; try { t.setSelectionRange(p, p); } catch (x) { /* ignore */ } }
     }
-    current.data[k] = t.value; refreshCalc(); scheduleSave();
+    current.data[k] = t.value;
+    if (k === "model") {
+      var mm2 = modelByName(t.value), otrIn = document.querySelector('[data-k="otr"]');
+      if (mm2 && otrIn) { otrIn.value = fmt2(mm2.otr); current.data.otr = otrIn.value; }
+    }
+    refreshCalc(); scheduleSave();
   }
   function refreshCalc() {
     if (!current) return;
@@ -218,11 +268,11 @@
     doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.text("CALCULATIONS FORM", 105, 18, { align: "center" });
     var head = [["CUSTOMER", d.customer], ["SA", d.sa], ["MONTH", d.month], ["REG NO", d.regno], ["REG DATE", fmtDate(d.regdate)], ["MODEL", d.model]];
     head.forEach(function (h, i) { var y = 32 + i * 8; lab(h[0], L, y); lab(":", 52, y); line(55, R, y, h[1]); });
-    var rows = [["OTR PRICE W/OUT INSURANCE", d.otr], ["INSURANCE", d.ins], ["TOTAL SELLING PRICE", c.totalSelling], ["LESS LOAN AMOUNT", d.loan],
+    var rows = [["OTR PRICE W/OUT INSURANCE", d.otr], ["INSURANCE", d.ins], ["TOTAL SELLING PRICE", (d.otr || d.ins) ? c.totalSelling : ""], ["LESS LOAN AMOUNT", d.loan],
       ["LESS SPPN/MLM", d.sppn], ["LESS BOOKING", d.booking], ["LESS DOWNPAYMENT - 1", d.dp1], ["LESS DOWNPAYMENT - 2", d.dp2],
       ["LESS DOWNPAYMENT - 3", d.dp3], ["LESS EXTRA DISCOUNTING", d.extra], ["BROKER CLAIMS", d.broker_claims]];
     rows.forEach(function (r, i) {
-      var y = 90 + i * 8, v = (r[1] === "" || r[1] === undefined) ? "" : money(num(r[1])).replace(/\.00$/, "");
+      var y = 90 + i * 8, v = (r[1] === "" || r[1] === undefined) ? "" : "RM " + money(num(r[1]));
       lab(r[0], L, y); lab(":", 85, y); line(88, R, y, v);
     });
     lab("SA ENTITLEMENT", L, 190); doc.setFontSize(7); doc.text("*PLS DON'T FILL IN", 52, 190);
@@ -286,6 +336,7 @@
   document.addEventListener("visibilitychange", function () { if (document.hidden) saveCurrent(); });
   if (location.hash === "#edit") history.replaceState(null, "", location.pathname);
   showList();
+  loadPrices();
   if ("serviceWorker" in navigator && /^https?:$/.test(location.protocol)) navigator.serviceWorker.register("sw.js").catch(function () {});
   window.__sa = { buildPdf: buildPdf, forms: function () { return forms; } };
 })();
